@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Cart - E-Commerce{% endblock %}
+
+{% block content %}
+<div style="max-width:1000px;margin:18px auto;padding:18px;">
+  <h2 style="margin:0 0 12px;font-size:22px;color:#222">Your cart</h2>
+
+  {% if not items %}
+    <div style="padding:20px;border:1px solid #eee;border-radius:8px;background:#fff;text-align:center;color:#666">
+      Your cart is empty. Browse <a href="{% url 'store' %}">the store</a> to add items.
+    </div>
+
+  {% else %}
+    <div style="display:grid;grid-template-columns:1fr 320px;gap:20px;align-items:start;">
+
+      <!-- LEFT: ITEMS -->
+      <div>
+        <div style="background:#fff;border:1px solid #eee;border-radius:8px;padding:12px;">
+          <div style="display:flex;gap:12px;font-weight:700;padding:8px 6px;border-bottom:1px solid #f3f3f3;color:#444;">
+            <div style="flex:0 0 80px">Product</div>
+            <div style="flex:1">Details</div>
+            <div style="width:140px;text-align:right">Price</div>
+          </div>
+
+          {% for it in items %}
+            {% with product=it.product qty=it.qty line_total=it.line_total %}
+            <div style="display:flex;gap:12px;padding:14px 6px;border-bottom:1px solid #f9f9f9;align-items:center;">
+
+              <!-- IMAGE -->
+              <div style="flex:0 0 80px;">
+                {% if product.image %}
+                  <img src="{{ product.image.url }}" alt="{{ product.name }}" style="width:72px;height:72px;object-fit:contain;border-radius:6px">
+                {% else %}
+                  <img src="{% static 'images/placeholder.png' %}" style="width:72px;height:72px;object-fit:contain;border-radius:6px">
+                {% endif %}
+              </div>
+
+              <!-- DETAILS -->
+              <div style="flex:1;">
+                <div style="font-weight:700;color:#222">{{ product.name }}</div>
+                <div style="color:#666;margin-top:6px;font-size:13px;">
+                  {{ product.description|default:"" }}
+                </div>
+
+                <div style="display:flex;gap:8px;align-items:center;margin-top:12px;">
+
+                  <!-- MINUS (remove=1) -->
+                  <form method="post" action="{% url 'homepage' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="product" value="{{ product.id }}">
+                    <input type="hidden" name="remove" value="1">
+                    <button type="submit"
+                      style="border:1px solid #ddd;padding:6px 10px;border-radius:6px;background:#fff;cursor:pointer;">
+                      −
+                    </button>
+                  </form>
+
+                  <!-- QTY DISPLAY -->
+                  <div style="min-width:56px;text-align:center;font-weight:700;background:#f7f7f7;border-radius:6px;padding:8px 6px;">
+                    {{ qty }}
+                  </div>
+
+                  <!-- PLUS (+1) -->
+                  <form method="post" action="{% url 'homepage' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="product" value="{{ product.id }}">
+                    <button type="submit"
+                      style="border:1px solid #ddd;padding:6px 10px;border-radius:6px;background:var(--green);color:#fff;cursor:pointer;">
+                      +
+                    </button>
+                  </form>
+
+                  <!-- REMOVE ALL -->
+                  <form method="post" action="{% url 'homepage' %}" style="margin-left:10px;">
+                    {% csrf_token %}
+                    <input type="hidden" name="product" value="{{ product.id }}">
+                    <input type="hidden" name="remove_all" value="1">
+                    <button type="submit"
+                      style="background:transparent;border:0;color:#d33;cursor:pointer;font-weight:700;">
+                      Remove
+                    </button>
+                  </form>
+
+                </div>
+              </div>
+
+              <!-- Price + line total -->
+              <div style="width:140px;text-align:right;">
+                <div style="font-weight:700;">Rs {{ product.price }}</div>
+                <div style="color:#666;margin-top:8px;">
+                  Subtotal: <strong>Rs {{ line_total }}</strong>
+                </div>
+              </div>
+
+            </div>
+            {% endwith %}
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- RIGHT: SUMMARY -->
+      <div>
+        <div style="background:#fff;border:1px solid #eee;border-radius:8px;padding:16px;">
+          <h3 style="margin:0 0 10px;">Order summary</h3>
+
+          <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f2f2f2;">
+            <div style="color:#666;">Items</div>
+            <div style="font-weight:700;">{{ items|length }}</div>
+          </div>
+
+          <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid #f2f2f2;">
+            <div style="color:#666;">Subtotal</div>
+            <div style="font-weight:800;">Rs {{ grand_total }}</div>
+          </div>
+
+          <div style="padding-top:12px;">
+            <a href="{% url 'checkout' %}" class="add-btn" style="display:block;text-align:center;text-decoration:none;">
+              Proceed to Checkout
+            </a>
+          </div>
+
+          <div style="margin-top:10px;text-align:center;">
+            <a href="{% url 'store' %}">Continue shopping</a>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

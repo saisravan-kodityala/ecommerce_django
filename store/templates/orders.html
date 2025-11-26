@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}My Orders - E-Commerce{% endblock %}
+
+{% block content %}
+<div style="max-width:1000px;margin:18px auto;padding:18px;">
+  <h2 style="margin:0 0 12px;font-size:22px;color:#222">Your orders</h2>
+
+  {% if not orders %}
+    <div style="padding:20px;border:1px solid #eee;border-radius:8px;background:#fff;text-align:center;color:#666">
+      You have no orders yet. <a href="{% url 'store' %}">Shop now</a>.
+    </div>
+  {% else %}
+    <div style="display:flex;flex-direction:column;gap:14px;">
+      {% for order in orders %}
+        <div style="background:#fff;border:1px solid #eee;border-radius:8px;padding:14px;display:flex;gap:12px;align-items:flex-start;">
+          <!-- product image -->
+          <div style="width:84px;height:84px;flex:0 0 84px;display:flex;align-items:center;justify-content:center;">
+            {% if order.product.image %}
+              <img src="{{ order.product.image.url }}" alt="{{ order.product.name }}" style="max-width:84px;max-height:84px;object-fit:contain;border-radius:6px">
+            {% else %}
+              <img src="{% static 'images/placeholder.png' %}" alt="no image" style="width:64px;height:64px;object-fit:contain;border-radius:6px">
+            {% endif %}
+          </div>
+
+          <!-- details -->
+          <div style="flex:1">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;">
+              <div>
+                <div style="font-weight:700;font-size:15px;color:#222">{{ order.product.name }}</div>
+                <div style="color:#666;margin-top:6px;font-size:13px">{{ order.product.description|default:"" }}</div>
+              </div>
+
+              <div style="text-align:right;min-width:140px">
+                <div style="font-weight:800;color:#111">Rs {{ order.price }}</div>
+                <div style="color:#666;font-size:13px;margin-top:8px">Qty: {{ order.quantity }}</div>
+                <div style="margin-top:10px">
+                  <a href="{% url 'checkout' %}" style="font-size:13px;color:#666;text-decoration:underline">Reorder</a>
+                </div>
+              </div>
+            </div>
+
+            <div style="margin-top:12px;display:flex;gap:18px;flex-wrap:wrap;color:#555;font-size:13px;align-items:center;">
+              <div><strong>Order ID</strong> &nbsp;#{{ order.id }}</div>
+              <div><strong>Placed</strong> &nbsp;{{ order.date|date:"M d, Y" }}</div>
+              <div><strong>Deliver to</strong> &nbsp;{{ order.address|default:"(no address provided)" }}</div>
+              <div><strong>Phone</strong> &nbsp;{{ order.phone|default:"-" }}</div>
+
+              <div>
+                <strong>Status</strong> &nbsp;
+                {% if order.status %}
+                  <span style="background:#2ecc71;color:#fff;padding:6px 10px;border-radius:8px;font-weight:700;font-size:13px">Completed</span>
+                {% else %}
+                  <span style="background:#f1c40f;color:#111;padding:6px 10px;border-radius:8px;font-weight:700;font-size:13px">Pending</span>
+                {% endif %}
+              </div>
+
+              <div>
+                <strong>Line total</strong> &nbsp;
+                Rs {% widthratio order.price order.quantity 1 %}
+              </div>
+
+              <!-- action button -->
+              <div style="margin-left:auto">
+                <a href="/orders/{{ order.id }}" style="background:#fff;border:1px solid #ddd;padding:8px 12px;border-radius:6px;text-decoration:none;color:#333;font-weight:700">Order details</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

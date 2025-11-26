@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>{% block title %}SRAVAN{% endblock %}</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  {% load static %}
+  <style>
+    /* Minimal styles to match screenshot layout (green header, left sidebar, product cards) */
+    :root{
+      --green:#1e3a8a;
+      --light:#f7f9f7;
+      --card-border:#e9eee9;
+      --muted:#6b6b6b;
+      --container-width:1100px;
+    }
+	/* === Categories chip styles === */
+.categories-list {
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  padding:14px;
+  align-items:flex-start;
+}
+.cat-chip {
+  display:inline-block;
+  background:#f1f6f1;
+  border:1px solid #e6efe6;
+  color:#1f5a24;
+  padding:8px 12px;
+  border-radius:8px;
+  text-decoration:none;
+  font-weight:600;
+  box-shadow:0 1px 0 rgba(0,0,0,0.02);
+}
+.cat-chip:hover { background:#e6f7e6; transform:translateY(-1px); }
+.cat-chip.active { background:#c6efc6; color:#144215; }
+
+    html,body{margin:0;padding:0;font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial; background:#fff;color:#222;}
+    .topbar{background:var(--green);height:62px;display:flex;align-items:center;padding:0 20px;color:#fff;box-shadow:0 2px 0 rgba(0,0,0,0.05);position:sticky;top:0;z-index:20;}
+    .brand{display:flex;align-items:center;gap:12px;font-weight:600;}
+    .brand .logo{width:36px;height:36px;border-radius:6px;background:#fff;color:var(--green);display:flex;align-items:center;justify-content:center;font-weight:700}
+    .top-actions{margin-left:auto;display:flex;gap:18px;align-items:center}
+    .top-actions a{color:#fff;text-decoration:none;font-weight:600}
+    .top-actions .cart{background:rgba(255,255,255,0.08);padding:6px 10px;border-radius:20px;display:inline-flex;align-items:center;gap:8px}
+
+    .main-wrap{max-width:var(--container-width);margin:26px auto;display:flex;gap:30px;padding:0 16px;}
+    .sidebar{width:220px;background:#fff;border:1px solid var(--card-border);border-radius:6px;padding:8px 0;height:calc(100vh - 160px);overflow:auto}
+    .cat-item{padding:14px 18px;border-bottom:1px solid #f0f0f0;cursor:pointer;color:#444}
+    .cat-item:hover{background:#f2fff2}
+    .cat-item.active{background:#b7f0be;color:#1a6720;font-weight:600}
+
+    .content{flex:1}
+    .products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:26px}
+    .card{background:#fff;border:1px solid var(--card-border);border-radius:6px;overflow:hidden;display:flex;flex-direction:column;height:100%}
+    .card .media{height:200px;display:flex;align-items:center;justify-content:center;background:#fff;padding:14px}
+    .card img{max-width:100%;max-height:100%;object-fit:contain}
+    .card .body{padding:16px;flex:1;display:flex;flex-direction:column;justify-content:space-between}
+    .card h3{margin:0 0 8px;font-size:16px;color:#333;font-weight:600}
+    .price{font-weight:700;margin-bottom:10px}
+    .add-btn{background:var(--green);color:#fff;border:none;padding:12px;border-radius:4px;width:100%;cursor:pointer;font-weight:700}
+    .add-btn:active{transform:translateY(1px)}
+
+    footer{margin-top:36px;padding:20px;text-align:center;color:#888;background:#fafafa;border-top:1px solid #f0f0f0}
+
+    /* small screens */
+    @media (max-width:880px){
+      .main-wrap{flex-direction:column;padding:10px}
+      .sidebar{width:100%;height:auto;display:flex;flex-wrap:wrap}
+      .cat-item{flex:1 1 45%;margin:6px}
+    }
+  </style>
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+  <div class="topbar">
+    <div class="brand">
+      <div class="logo">🛒</div>
+      <div>
+        <div style="font-size:18px">SRAVAN</div>
+        <div style="font-size:12px;opacity:0.9">Store</div>
+      </div>
+    </div>
+
+    <!-- Updated top-actions: shows Orders & Logout when logged in -->
+    <div class="top-actions">
+      <a href="{% url 'store' %}">Store</a>
+
+      {% if request.session.customer %}
+        <!-- logged-in user -->
+        <a href="{% url 'orders' %}">My Orders</a>
+
+        <a href="{% url 'cart' %}" class="cart">
+          Cart
+          {% with request.session.cart as cart %}
+            <span style="background:#fff;color:var(--green);border-radius:50%;width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;font-weight:700;margin-left:6px">
+              {{ cart|length|default:"0" }}
+            </span>
+          {% endwith %}
+        </a>
+
+        <a href="{% url 'logout' %}">Logout</a>
+      {% else %}
+        <!-- guest -->
+        <a href="{% url 'cart' %}" class="cart">
+          Cart
+          {% with request.session.cart as cart %}
+            <span style="background:#fff;color:var(--green);border-radius:50%;width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;font-weight:700;margin-left:6px">
+              {{ cart|length|default:"0" }}
+            </span>
+          {% endwith %}
+        </a>
+
+        <a href="{% url 'signup' %}">Signup</a>
+        <a href="{% url 'login' %}">Login</a>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="main-wrap">
+    {% block sidebar %}{% endblock %}
+    <div class="content">
+      {% block content %}{% endblock %}
+    </div>
+  </div>
+
+  <footer>
+    © {{ now.year }} SRAVAN · Built with love❤️
+  </footer>
+
+  {% block extra_scripts %}{% endblock %}
+</body>
+</html>

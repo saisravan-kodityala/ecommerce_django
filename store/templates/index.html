@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Store - SRAVAN{% endblock %}
+
+{% block sidebar %}
+<div class="sidebar">
+  <div style="padding:12px 16px;font-weight:700;color:#2b2b2b">Categories</div>
+
+  <div class="categories-list" style="padding:12px 16px;">
+    <!-- All chip -->
+    <a href="{% url 'store' %}" class="cat-chip {% if not request.GET.category %}active{% endif %}">All</a>
+
+    {% for cat in categories %}
+      {% comment %} compare as string since request.GET returns strings {% endcomment %}
+      {% if request.GET.category and request.GET.category == cat.id|stringformat:"s" %}
+        <a href="?category={{ cat.id }}" class="cat-chip active">{{ cat.name }}</a>
+      {% else %}
+        <a href="?category={{ cat.id }}" class="cat-chip">{{ cat.name }}</a>
+      {% endif %}
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
+
+{% block content %}
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
+    <div style="font-size:18px;font-weight:700;color:#444">Products</div>
+
+    <!-- Show all products button (secondary) -->
+    <div>
+      <a href="{% url 'store' %}" 
+         style="display:inline-block;background:#2a3f7a;color:#fff;padding:8px 16px;border-radius:20px;text-decoration:none;font-weight:700">
+        Show all products
+      </a>
+    </div>
+  </div>
+
+  <div class="products-grid">
+    {% for product in products %}
+      <div class="card">
+        <div class="media">
+          {% if product.image %}
+            <img src="{{ product.image.url }}" alt="{{ product.name }}">
+          {% else %}
+            <img src="{% static 'images/placeholder.png' %}" alt="no image">
+          {% endif %}
+        </div>
+
+        <div class="body">
+          <div>
+            <h3>{{ product.name }}</h3>
+            <div class="price">Rs {{ product.price }}</div>
+          </div>
+
+          <form method="post" action="{% url 'homepage' %}">
+            {% csrf_token %}
+            <input type="hidden" name="product" value="{{ product.id }}">
+            <button type="submit" class="add-btn">Add To Cart</button>
+          </form>
+        </div>
+      </div>
+    {% empty %}
+      <p>No products found.</p>
+    {% endfor %}
+  </div>
+
+  <!-- Pagination controls -->
+  <div style="margin-top:20px;text-align:center">
+    {% if products.has_previous %}
+      <a href="?page={{ products.previous_page_number }}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}">← Prev</a>
+    {% endif %}
+
+    <span style="margin:0 12px;color:#666;">
+      Page {{ products.number }} of {{ products.paginator.num_pages }}
+    </span>
+
+    {% if products.has_next %}
+      <a href="?page={{ products.next_page_number }}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}">Next →</a>
+    {% endif %}
+  </div>
+{% endblock %}
