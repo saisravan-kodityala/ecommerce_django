@@ -8,11 +8,11 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'unsafe-secret-key')
 DEBUG = os.environ.get('DJANGO_DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = [
+    'ecommerce-django-9ydf.onrender.com',
     'localhost',
-    '127.0.0.1',
-    # Add your Render domain here AFTER deploy:
-    # 'yourappname.onrender.com'
+    '127.0.0.1'
 ]
+
 
 # APPS
 INSTALLED_APPS = [
