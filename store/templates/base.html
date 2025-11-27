@@ -69,6 +69,97 @@
       .sidebar{width:100%;height:auto;display:flex;flex-wrap:wrap}
       .cat-item{flex:1 1 45%;margin:6px}
     }
+	/* === Mobile-friendly overrides (paste at the END of your current style block) === */
+
+/* Ensure responsive viewport exists in <head>:
+   <meta name="viewport" content="width=device-width,initial-scale=1"> 
+   (you already had this — keep it) */
+
+/* Make images always fit their container */
+.card img,
+.card .media img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+  object-fit: contain;
+}
+
+/* Adjust the topbar on small screens */
+@media (max-width: 720px) {
+  .topbar {
+    height: auto;
+    padding: 10px;
+    align-items: flex-start;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .brand { gap:8px; }
+  .brand .logo { width:32px; height:32px; font-size:14px; }
+
+  .top-actions {
+    margin-left: 0;
+    width:100%;
+    justify-content: flex-end;
+    gap:12px;
+    flex-wrap:wrap;
+    padding-top:4px;
+  }
+
+  .top-actions a { font-size:14px; padding:6px 8px; }
+  .top-actions .cart { padding:6px 8px; }
+
+  /* move store title smaller */
+  .brand > div div { font-size:12px; line-height:1; }
+
+  /* Sidebar becomes horizontal chips */
+  .main-wrap { padding: 12px; gap:14px; }
+  .sidebar {
+    width:100%;
+    height:auto;
+    display:flex;
+    flex-wrap:wrap;
+    padding:12px;
+    border-radius:8px;
+  }
+  .cat-item { margin:6px 6px 0 0; flex: 0 1 auto; display:inline-block; padding:8px 12px; }
+
+  /* Product grid becomes 1 column (or 2 for larger phones) */
+  .products-grid {
+    grid-template-columns: repeat(1, minmax(200px, 1fr));
+    gap:18px;
+  }
+
+  .card .media { height:200px; padding:10px; } /* reduce image area */
+  .card .body { padding:12px; }
+
+  .add-btn { padding:10px; font-size:15px; }
+
+  /* Fix the "Show all products" button in header area */
+  .show-all-btn {
+    display:block;
+    width:calc(100% - 24px);
+    margin:10px auto;
+    text-align:center;
+  }
+}
+
+/* Medium phones / small tablets */
+@media (min-width: 721px) and (max-width: 1024px) {
+  .products-grid { grid-template-columns: repeat(2, minmax(220px, 1fr)); }
+  .card .media { height:220px; }
+  .sidebar { width:220px; }
+}
+
+/* Improve clickable target on all sizes */
+.cat-item, .add-btn, .top-actions a { border-radius:10px; }
+
+/* Make cart badge smaller on phones */
+@media (max-width: 480px) {
+  .top-actions .cart span { width:18px; height:18px; font-size:12px; margin-left:6px; }
+}
+
   </style>
   {% block extra_head %}{% endblock %}
 </head>
