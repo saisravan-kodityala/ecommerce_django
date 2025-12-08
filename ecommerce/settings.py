@@ -8,7 +8,7 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'unsafe-secret-key')
 DEBUG = True
 
 
-ALLOWED_HOSTS = [
+ALLOWED_HOSTS = ['*',
     'ecommerce-django-9ydf.onrender.com',
     'localhost',
     '127.0.0.1'
