@@ -7,6 +7,7 @@ from .views.cart import Cart
 from .views.checkout import CheckOut
 from .views.orders import OrderView
 from .middlewares.auth import auth_middleware
+from .views import create_admin
 
 
 urlpatterns = [
