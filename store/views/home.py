@@ -81,3 +81,16 @@ def store(request):
         'selected_category': selected_category,
     }
     return render(request, 'index.html', context)
+
+from django.contrib.auth.models import User
+from django.http import HttpResponse
+
+def create_admin(request):
+    if User.objects.filter(username="admin").exists():
+        return HttpResponse("Admin already exists!")
+    User.objects.create_superuser(
+        username="admin",
+        password="admin123",
+        email="admin@example.com"
+    )
+    return HttpResponse("Admin user created successfully!")
